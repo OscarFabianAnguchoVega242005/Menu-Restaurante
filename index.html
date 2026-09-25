@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Menú - La Cocina de Richy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f7ff 0%, #d1c4e9 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .restaurant-name {
+            text-align: center;
+            color: #5e35b1;
+            font-size: 1.8em;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 50px;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 6px;
+            font-size: 0.9em;
+        }
+
+        select, input, textarea {
+            padding: 10px 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 0.95em;
+            transition: border-color 0.3s;
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #5e35b1;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+            font-family: Arial, sans-serif;
+        }
+
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .item-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .item-container input {
+            flex: 1;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 0.85em;
+        }
+
+        .btn-add {
+            background: #5e35b1;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #4527a0;
+        }
+
+        .btn-remove {
+            background: #e53935;
+            color: white;
+            padding: 8px 12px;
+            min-width: 40px;
+        }
+
+        .btn-remove:hover {
+            background: #c62828;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #5e35b1 0%, #7e57c2 100%);
+            color: white;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .btn-download:hover {
+            background: linear-gradient(135deg, #4527a0 0%, #673ab7 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(94, 53, 177, 0.3);
+        }
+
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .canvas-container {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .download-info {
+            text-align: center;
+            color: #666;
+            margin-top: 15px;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .restaurant-name {
+                font-size: 1.5em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ Menú del Día 🍽️</h1>
+        <div class="restaurant-name">La Cocina de Richy</div>
+        
+
+        <div class="main-content">
+            <!-- Formulario -->
+            <div class="form-section">
+                <div class="form-group">
+                    <label>Estilo de Diseño</label>
+                    <select id="estilo">
+                        <option value="elegante">Elegante Nocturno</option>
+                        <option value="oceano">Océano Profundo</option>
+                        <option value="royal">Royal Purple</option>
+                        <option value="crimson">Crimson Night</option>
+                        <option value="neon">Neon Dreams</option>
+                        <option value="vintage">Vintage Gold</option>
+                        <option value="classic">Classic Ornament</option>
+                        <option value="deluxe">Deluxe Black & Gold</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Entradas</label>
+                    <div class="item-list" id="entradas-list">
+                        <div class="item-container">
+                            <input type="text" class="entrada-item" placeholder="Ej: Sopa del día" value="Sopa del día">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('entradas')">+ Agregar Entrada</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Platos Principales</label>
+                    <div class="item-list" id="principales-list">
+                        <div class="item-container">
+                            <input type="text" class="principal-item" placeholder="Ej: Arroz con pollo" value="Arroz con pollo">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                        <div class="item-container">
+                            <input type="text" class="principal-item" placeholder="Ej: Pescado al horno" value="Pescado al horno">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('principales')">+ Agregar Plato Principal</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Acompañamientos</label>
+                    <div class="item-list" id="acompañamientos-list">
+                        <div class="item-container">
+                            <input type="text" class="acompañamiento-item" placeholder="Ej: Ensalada" value="Ensalada">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                        <div class="item-container">
+                            <input type="text" class="acompañamiento-item" placeholder="Ej: Papas fritas" value="Papas fritas">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('acompañamientos')">+ Agregar Acompañamiento</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Postres</label>
+                    <div class="item-list" id="postres-list">
+                        <div class="item-container">
+                            <input type="text" class="postre-item" placeholder="Ej: Flan de caramelo" value="Postre del día">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('postres')">+ Agregar Postre</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Bebidas</label>
+                    <div class="item-list" id="bebidas-list">
+                        <div class="item-container">
+                            <input type="text" class="bebida-item" placeholder="Ej: Jugo natural" value="Jugo natural">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('bebidas')">+ Agregar Bebida</button>
+                </div>
+            </div>
+
+            <!-- Vista previa -->
+            <div class="preview-section">
+                <div class="preview-title">Vista Previa</div>
+                <div class="canvas-container">
+                    <canvas id="menuCanvas"></canvas>
+                </div>
+                <button class="btn btn-download" onclick="downloadImage()">⬇️ Descargar Imagen para WhatsApp</button>
+                <p class="download-info">La imagen se descargará optimizada para compartir en WhatsApp</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const estilos = {
+            elegante: {
+                bg: ['#0f2027', '#203a43', '#2c5364'],
+                textColor: '#ffffff',
+                accentColor: '#00d4ff',
+                shadow: 'rgba(0, 212, 255, 0.4)',
+                pattern: 'waves'
+            },
+            oceano: {
+                bg: ['#141e30', '#243b55'],
+                textColor: '#ffffff',
+                accentColor: '#4fc3f7',
+                shadow: 'rgba(79, 195, 247, 0.4)',
+                pattern: 'bubbles'
+            },
+            royal: {
+                bg: ['#1a0033', '#2d0052', '#4a0080'],
+                textColor: '#ffffff',
+                accentColor: '#bf00ff',
+                shadow: 'rgba(191, 0, 255, 0.5)',
+                pattern: 'geometric'
+            },
+            crimson: {
+                bg: ['#0a0000', '#1a0505', '#300a0a'],
+                textColor: '#ffffff',
+                accentColor: '#ff0844',
+                shadow: 'rgba(255, 8, 68, 0.5)',
+                pattern: 'flames'
+            },
+            neon: {
+                bg: ['#0a0015', '#1a0033', '#2d004d'],
+                textColor: '#ffffff',
+                accentColor: '#00ffff',
+                shadow: 'rgba(0, 255, 255, 0.5)',
+                pattern: 'grid'
+            },
+            vintage: {
+                bg: ['#1a2332', '#1a2332'],
+                textColor: '#d4af37',
+                accentColor: '#d4af37',
+                shadow: 'rgba(212, 175, 55, 0.6)',
+                pattern: 'ornament1'
+            },
+            classic: {
+                bg: ['#3d3020', '#2a2010'],
+                textColor: '#f5deb3',
+                accentColor: '#d4af37',
+                shadow: 'rgba(212, 175, 55, 0.5)',
+                pattern: 'ornament2'
+            },
+            deluxe: {
+                bg: ['#000000', '#1a1a1a'],
+                textColor: '#ffffff',
+                accentColor: '#d4af37',
+                shadow: 'rgba(212, 175, 55, 0.7)',
+                pattern: 'deluxe'
+            }
+        };
+
+        function addItem(type) {
+            const list = document.getElementById(`${type}-list`);
+            const container = document.createElement('div');
+            container.className = 'item-container';
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = `${type.slice(0, -1)}-item`;
+            input.placeholder = `Ej: Nuevo ${type.slice(0, -1)}`;
+            
+            const btnRemove = document.createElement('button');
+            btnRemove.className = 'btn btn-remove';
+            btnRemove.textContent = '✕';
+            btnRemove.onclick = () => {
+                container.remove();
+                generateImage();
+            };
+            
+            container.appendChild(input);
+            container.appendChild(btnRemove);
+            list.appendChild(container);
+        }
+
+        function getItems(className) {
+            const items = document.querySelectorAll(`.${className}`);
+            return Array.from(items).map(item => item.value).filter(val => val.trim());
+        }
+
+        function generateImage() {
+            const canvas = document.getElementById('menuCanvas');
+            const ctx = canvas.getContext('2d');
+            const estiloSeleccionado = document.getElementById('estilo').value;
+            const estilo = estilos[estiloSeleccionado];
+
+            canvas.width = 1080;
+            canvas.height = 1920;
+
+            // Fondo con gradiente mejorado
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            if (estilo.bg.length === 3) {
+                gradient.addColorStop(0, estilo.bg[0]);
+                gradient.addColorStop(0.5, estilo.bg[1]);
+                gradient.addColorStop(1, estilo.bg[2]);
+            } else {
+                gradient.addColorStop(0, estilo.bg[0]);
+                gradient.addColorStop(1, estilo.bg[1]);
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Patrones decorativos según el estilo
+            ctx.globalAlpha = 0.15;
+            
+            if (estilo.pattern === 'waves') {
+                // Ondas elegantes
+                for (let i = 0; i < 5; i++) {
+                    ctx.strokeStyle = estilo.accentColor;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    for (let x = 0; x <= canvas.width; x += 20) {
+                        const y = 300 + i * 350 + Math.sin((x + i * 100) * 0.01) * 80;
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                }
+            } else if (estilo.pattern === 'bubbles') {
+                // Burbujas flotantes
+                for (let i = 0; i < 15; i++) {
+                    ctx.fillStyle = estilo.accentColor;
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const r = 30 + Math.random() * 100;
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else if (estilo.pattern === 'geometric') {
+                // Patrón geométrico
+                ctx.strokeStyle = estilo.accentColor;
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 8; i++) {
+                    for (let j = 0; j < 12; j++) {
+                        const x = i * 150 + 50;
+                        const y = j * 180 + 50;
+                        ctx.strokeRect(x, y, 80, 80);
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x + 80, y + 80);
+                        ctx.stroke();
+                    }
+                }
+            } else if (estilo.pattern === 'flames') {
+                // Llamas estilizadas
+                ctx.fillStyle = estilo.accentColor;
+                for (let i = 0; i < 20; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = canvas.height - Math.random() * 400;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.quadraticCurveTo(x - 40, y - 100, x, y - 180);
+                    ctx.quadraticCurveTo(x + 40, y - 100, x, y);
+                    ctx.fill();
+                }
+            } else if (estilo.pattern === 'grid') {
+                // Grid neón
+                ctx.strokeStyle = estilo.accentColor;
+                ctx.lineWidth = 1;
+                for (let i = 0; i < canvas.width; i += 60) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, canvas.height);
+                    ctx.stroke();
+                }
+                for (let i = 0; i < canvas.height; i += 60) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, i);
+                    ctx.lineTo(canvas.width, i);
+                    ctx.stroke();
+                }
+            } else if (estilo.pattern === 'ornament1') {
+                // Marco ornamental estilo imagen 1
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = estilo.accentColor;
+                ctx.lineWidth = 8;
+                ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+                ctx.lineWidth = 3;
+                ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
+                
+                // Esquinas decorativas
+                ctx.fillStyle = estilo.accentColor;
+                for (let corner of [{x: 100, y: 100}, {x: canvas.width - 100, y: 100}, 
+                                    {x: 100, y: canvas.height - 100}, {x: canvas.width - 100, y: canvas.height - 100}]) {
+                    ctx.beginPath();
+                    ctx.arc(corner.x, corner.y, 15, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 0.15;
+            } else if (estilo.pattern === 'ornament2') {
+                // Diseño vintage con esquinas ornamentales (imagen 2)
+                ctx.globalAlpha = 0.3;
+                ctx.fillStyle = estilo.accentColor;
+                
+                // Esquinas superiores
+                ctx.beginPath();
+                ctx.moveTo(50, 150);
+                ctx.quadraticCurveTo(80, 100, 120, 80);
+                ctx.quadraticCurveTo(90, 120, 50, 150);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.moveTo(canvas.width - 50, 150);
+                ctx.quadraticCurveTo(canvas.width - 80, 100, canvas.width - 120, 80);
+                ctx.quadraticCurveTo(canvas.width - 90, 120, canvas.width - 50, 150);
+                ctx.fill();
+                
+                // Esquinas inferiores
+                ctx.beginPath();
+                ctx.moveTo(50, canvas.height - 150);
+                ctx.quadraticCurveTo(80, canvas.height - 100, 120, canvas.height - 80);
+                ctx.quadraticCurveTo(90, canvas.height - 120, 50, canvas.height - 150);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.moveTo(canvas.width - 50, canvas.height - 150);
+                ctx.quadraticCurveTo(canvas.width - 80, canvas.height - 100, canvas.width - 120, canvas.height - 80);
+                ctx.quadraticCurveTo(canvas.width - 90, canvas.height - 120, canvas.width - 50, canvas.height - 150);
+                ctx.fill();
+                
+                ctx.globalAlpha = 0.15;
+            } else if (estilo.pattern === 'deluxe') {
+                // Diseño deluxe con banda dorada (imagen 3)
+                ctx.globalAlpha = 1;
+                
+                // Banda horizontal dorada
+                ctx.fillStyle = estilo.accentColor;
+                ctx.fillRect(0, 850, canvas.width, 120);
+                
+                // Marco con esquinas recortadas
+                ctx.strokeStyle = estilo.accentColor;
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.moveTo(100, 60);
+                ctx.lineTo(canvas.width - 100, 60);
+                ctx.lineTo(canvas.width - 60, 100);
+                ctx.lineTo(canvas.width - 60, canvas.height - 100);
+                ctx.lineTo(canvas.width - 100, canvas.height - 60);
+                ctx.lineTo(100, canvas.height - 60);
+                ctx.lineTo(60, canvas.height - 100);
+                ctx.lineTo(60, 100);
+                ctx.closePath();
+                ctx.stroke();
+                
+                // Círculo central decorativo
+                ctx.fillStyle = estilo.accentColor;
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, 910, 80, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#000000';
+                ctx.beginPath();
+                ctx.arc(canvas.width / 2, 910, 70, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.globalAlpha = 0.15;
+            }
+            
+            ctx.globalAlpha = 1;
+
+            let yPos = 120;
+
+            // Título del restaurante con sombra
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillStyle = estilo.accentColor;
+            ctx.font = 'bold 70px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('LA COCINA DE RICHY', canvas.width / 2, yPos);
+            ctx.shadowBlur = 0;
+            yPos += 30;
+
+            // Línea decorativa con brillo
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = estilo.accentColor;
+            ctx.strokeStyle = estilo.accentColor;
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(300, yPos);
+            ctx.lineTo(780, yPos);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            yPos += 80;
+
+            // MENÚ DEL DÍA con sombra
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+            ctx.fillStyle = estilo.textColor;
+            ctx.font = 'bold 90px Arial';
+            ctx.fillText('MENÚ DEL DÍA', canvas.width / 2, yPos);
+            ctx.shadowBlur = 0;
+            yPos += 60;
+
+            // Fecha
+            const fecha = new Date().toLocaleDateString('es-ES', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            ctx.font = '45px Arial';
+            ctx.fillStyle = estilo.accentColor;
+            ctx.fillText(fecha, canvas.width / 2, yPos);
+            yPos += 100;
+
+            // Función para dibujar sección
+            function drawSection(titulo, items) {
+                if (items.length === 0) return;
+                
+                ctx.fillStyle = estilo.accentColor;
+                ctx.font = 'bold 55px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(titulo, 100, yPos);
+                yPos += 70;
+
+                ctx.fillStyle = estilo.textColor;
+                ctx.font = '45px Arial';
+                items.forEach(item => {
+                    if (item.trim()) {
+                        ctx.fillText('• ' + item, 130, yPos);
+                        yPos += 60;
+                    }
+                });
+                yPos += 30;
+            }
+
+            // Dibujar secciones
+            const entradas = getItems('entrada-item');
+            const principales = getItems('principal-item');
+            const acompañamientos = getItems('acompañamiento-item');
+            const postres = getItems('postre-item');
+            const bebidas = getItems('bebida-item');
+
+            drawSection('ENTRADAS', entradas);
+            drawSection('PLATOS PRINCIPALES', principales);
+            drawSection('ACOMPAÑAMIENTOS', acompañamientos);
+            drawSection('POSTRES', postres);
+            drawSection('BEBIDAS', bebidas);
+        }
+
+        function downloadImage() {
+            generateImage();
+            const canvas = document.getElementById('menuCanvas');
+            const link = document.createElement('a');
+            const hoy = new Date().toISOString().split('T')[0];
+            link.download = `menu-${hoy}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Generar imagen inicial
+        window.onload = function() {
+            generateImage();
+            
+            document.getElementById('estilo').addEventListener('change', generateImage);
+            
+            setInterval(function() {
+                const inputs = document.querySelectorAll('input[type="text"]');
+                inputs.forEach(function(input) {
+                    if (!input.hasAttribute('data-listener')) {
+                        input.addEventListener('input', generateImage);
+                        input.setAttribute('data-listener', 'true');
+                    }
+                });
+            }, 500);
+        };
+    </script>
+</body>
+</html>

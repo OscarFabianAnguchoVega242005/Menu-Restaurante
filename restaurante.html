@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Menú - La Cocina de Richy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #e0f7ff 0%, #d1c4e9 100%);
+            padding: 30px;
+            min-height: 100vh;
+            overflow-x: hidden; /* ← Evita scroll horizontal */
+        }
+
+        .container {
+            max-width: 3600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 12px 50px rgba(0,0,0,0.25);
+            padding: 80px;
+            overflow-x: hidden; /* ← Evita desbordamiento interno */
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            font-size: 4em;
+            margin-bottom: 25px;
+            letter-spacing: 1px;
+        }
+
+        .restaurant-name {
+            text-align: center;
+            color: #5e35b1;
+            font-size: 2.8em;
+            font-weight: bold;
+            margin-bottom: 25px;
+            letter-spacing: 0.5px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 70px;
+            font-size: 1.3em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 80px;
+        }
+
+        .form-section {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 14px;
+            font-size: 1.25em;
+        }
+
+        select, input, textarea {
+            padding: 18px 22px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1.2em;
+            transition: border-color 0.3s, box-shadow 0.3s;
+            width: 100%; /* ← Fuerza ancho completo */
+            box-sizing: border-box; /* ← Importante */
+        }
+
+        select:focus, input:focus, textarea:focus {
+            outline: none;
+            border-color: #5e35b1;
+            box-shadow: 0 0 0 3px rgba(94, 53, 177, 0.15);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-family: Arial, sans-serif;
+        }
+
+        .item-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .item-container {
+            display: flex;
+            gap: 20px;
+            width: 100%; /* ← Ancho completo */
+            align-items: center;
+        }
+
+        .item-container input {
+            flex: 1;
+            min-height: 52px;
+            width: 100%;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            font-size: 1.1em;
+            min-height: 52px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%; /* ← Botón ocupa todo el ancho en móvil */
+            box-sizing: border-box;
+        }
+
+        .btn-add {
+            background: #5e35b1;
+            color: white;
+        }
+
+        .btn-add:hover {
+            background: #4527a0;
+        }
+
+        .btn-remove {
+            background: #e53935;
+            color: white;
+            padding: 14px 20px;
+            min-width: 56px;
+            width: auto; /* ← No forzar 100% en botón de eliminar */
+        }
+
+        .btn-remove:hover {
+            background: #c62828;
+        }
+
+        .btn-download {
+            background: linear-gradient(135deg, #5e35b1 0%, #7e57c2 100%);
+            color: white;
+            padding: 24px 48px;
+            font-size: 1.4em;
+            width: 100%;
+            margin-top: 40px;
+            border-radius: 12px;
+            box-sizing: border-box;
+        }
+
+        .btn-download:hover {
+            background: linear-gradient(135deg, #4527a0 0%, #673ab7 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(94, 53, 177, 0.4);
+        }
+
+        .preview-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .preview-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 1.5em;
+        }
+
+        .canvas-container {
+            background: #f8f9fa;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+            width: 100%;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+        }
+
+        canvas {
+            width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            background: white;
+        }
+
+        /* --- RESPONSIVE --- */
+        @media (max-width: 968px) {
+            .container {
+                padding: 30px 20px;
+                max-width: 100%;
+                border-radius: 16px;
+            }
+
+            h1 {
+                font-size: 2.4em;
+            }
+
+            .restaurant-name {
+                font-size: 1.8em;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .form-section {
+                gap: 30px;
+            }
+
+            .form-group {
+                margin-bottom: 8px;
+            }
+
+            label {
+                font-size: 1.1em;
+                margin-bottom: 10px;
+            }
+
+            select, input, textarea {
+                padding: 14px 18px;
+                font-size: 1.1em;
+            }
+
+            .item-container {
+                gap: 12px;
+            }
+
+            .item-container input {
+                min-height: 48px;
+            }
+
+            .btn {
+                padding: 12px 24px;
+                font-size: 1em;
+                min-height: 48px;
+            }
+
+            .btn-remove {
+                padding: 12px 16px;
+                min-width: 48px;
+            }
+
+            .btn-download {
+                padding: 20px 32px;
+                font-size: 1.2em;
+                margin-top: 30px;
+            }
+
+            .canvas-container {
+                padding: 20px;
+                border-radius: 12px;
+            }
+
+            .preview-title {
+                font-size: 1.3em;
+            }
+        }
+
+        /* Para pantallas aún más pequeñas (móviles) */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px 15px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .restaurant-name {
+                font-size: 1.5em;
+            }
+
+            .form-section {
+                gap: 20px;
+            }
+
+            .form-group {
+                margin-bottom: 6px;
+            }
+
+            label {
+                font-size: 1em;
+                margin-bottom: 8px;
+            }
+
+            select, input, textarea {
+                padding: 12px 16px;
+                font-size: 1em;
+            }
+
+            .item-container {
+                gap: 10px;
+            }
+
+            .item-container input {
+                min-height: 44px;
+            }
+
+            .btn {
+                padding: 10px 20px;
+                font-size: 0.95em;
+                min-height: 44px;
+            }
+
+            .btn-remove {
+                padding: 10px 14px;
+                min-width: 44px;
+            }
+
+            .btn-download {
+                padding: 18px 28px;
+                font-size: 1.1em;
+                margin-top: 25px;
+            }
+
+            .canvas-container {
+                padding: 15px;
+                border-radius: 10px;
+            }
+
+            .preview-title {
+                font-size: 1.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🍽️ Menú del Día 🍽️</h1>
+        <div class="restaurant-name">La Cocina de Richy</div>
+
+        <div class="main-content">
+            <!-- Formulario -->
+            <div class="form-section">
+                <div class="form-group">
+                    <label>Estilo de Diseño</label>
+                    <select id="estilo">
+                        <option value="elegante">Elegante Nocturno</option>
+                        <option value="oceano">Océano Profundo</option>
+                        <option value="royal">Royal Purple</option>
+                        <option value="crimson">Crimson Night</option>
+                        <option value="neon">Neon Dreams</option>
+                        <option value="vintage">Vintage Gold</option>
+                        <option value="classic">Classic Ornament</option>
+                        <option value="deluxe">Deluxe Black & Gold</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Almuerzo Ejecutivo</label>
+                    <div class="item-list" id="almuerzo-ejecutivo-list">
+                        <div class="item-container">
+                            <input type="text" class="almuerzo-ejecutivo-item" placeholder="Ej: Arroz con Pollo" value="Arroz con Pollo">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('almuerzo-ejecutivo')">+ Agregar Almuerzo Ejecutivo</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Principios</label>
+                    <div class="item-list" id="principios-list">
+                        <div class="item-container">
+                            <input type="text" class="principio-item" placeholder="Ej: Arvejas" value="Arvejas">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                        <div class="item-container">
+                            <input type="text" class="principio-item" placeholder="Ej: Frijol" value="Frijol">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('principios')">+ Agregar Principio</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Carnes</label>
+                    <div class="item-list" id="carnes-list">
+                        <div class="item-container">
+                            <input type="text" class="carne-item" placeholder="Ej: Carne Sudada" value="Carne Sudada">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('carnes')">+ Agregar Carne</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Especiales</label>
+                    <div class="item-list" id="especiales-list">
+                        <!-- Comienza vacío -->
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('especiales')">+ Agregar Especial</button>
+                </div>
+
+                <div class="form-group">
+                    <label>Bebidas</label>
+                    <div class="item-list" id="bebidas-list">
+                        <div class="item-container">
+                            <input type="text" class="bebida-item" placeholder="Ej: Limonada" value="Limonada">
+                            <button class="btn btn-remove" onclick="this.parentElement.remove(); generateImage();">✕</button>
+                        </div>
+                    </div>
+                    <button class="btn btn-add" onclick="addItem('bebidas')">+ Agregar Bebida</button>
+                </div>
+            </div>
+
+            <!-- Vista previa -->
+            <div class="preview-section">
+                <div class="preview-title">Vista Previa</div>
+                <div class="canvas-container">
+                    <canvas id="menuCanvas"></canvas>
+                </div>
+                <button class="btn btn-download" onclick="downloadImage()">⬇️ Descargar Imagen</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let logoImage = null;
+
+        const estilos = {
+            elegante: {
+                bg: ['#0f2027', '#203a43', '#2c5364'],
+                textColor: '#ffffff',
+                accentColor: '#00d4ff',
+                shadow: 'rgba(0, 212, 255, 0.4)',
+                pattern: 'waves'
+            },
+            oceano: {
+                bg: ['#141e30', '#243b55'],
+                textColor: '#ffffff',
+                accentColor: '#4fc3f7',
+                shadow: 'rgba(79, 195, 247, 0.4)',
+                pattern: 'bubbles'
+            },
+            royal: {
+                bg: ['#1a0033', '#2d0052', '#4a0080'],
+                textColor: '#ffffff',
+                accentColor: '#bf00ff',
+                shadow: 'rgba(191, 0, 255, 0.5)',
+                pattern: 'geometric'
+            },
+            crimson: {
+                bg: ['#0a0000', '#1a0505', '#300a0a'],
+                textColor: '#ffffff',
+                accentColor: '#ff0844',
+                shadow: 'rgba(255, 8, 68, 0.5)',
+                pattern: 'flames'
+            },
+            neon: {
+                bg: ['#0a0015', '#1a0033', '#2d004d'],
+                textColor: '#ffffff',
+                accentColor: '#00ffff',
+                shadow: 'rgba(0, 255, 255, 0.5)',
+                pattern: 'grid'
+            },
+            vintage: {
+                bg: ['#1a2332', '#1a2332'],
+                textColor: '#d4af37',
+                accentColor: '#d4af37',
+                shadow: 'rgba(212, 175, 55, 0.6)',
+                pattern: 'ornament1'
+            },
+            classic: {
+                bg: ['#3d3020', '#2a2010'],
+                textColor: '#f5deb3',
+                accentColor: '#d4af37',
+                shadow: 'rgba(212, 175, 55, 0.5)',
+                pattern: 'ornament2'
+            },
+            deluxe: {
+                bg: ['#000000', '#1a1a1a'],
+                textColor: '#ffffff',
+                accentColor: '#d4af37',
+                shadow: 'rgba(212, 175, 55, 0.7)',
+                pattern: 'deluxe'
+            }
+        };
+
+        function addItem(type) {
+            const classMap = {
+                'almuerzo-ejecutivo': 'almuerzo-ejecutivo-item',
+                'principios': 'principio-item',
+                'carnes': 'carne-item',
+                'especiales': 'especial-item',
+                'bebidas': 'bebida-item'
+            };
+
+            const itemClass = classMap[type];
+            if (!itemClass) return;
+
+            const list = document.getElementById(`${type}-list`);
+            if (!list) return;
+
+            const container = document.createElement('div');
+            container.className = 'item-container';
+            
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.className = itemClass;
+            const readableType = type
+                .replace('almuerzo-ejecutivo', 'Almuerzo Ejecutivo')
+                .replace('especiales', 'Especial')
+                .replace('principios', 'Principio')
+                .replace('carnes', 'Carne')
+                .replace('bebidas', 'Bebida');
+            input.placeholder = `Ej: Nuevo ${readableType}`;
+            
+            const btnRemove = document.createElement('button');
+            btnRemove.className = 'btn btn-remove';
+            btnRemove.textContent = '✕';
+            btnRemove.onclick = () => {
+                container.remove();
+                generateImage();
+            };
+            
+            container.appendChild(input);
+            container.appendChild(btnRemove);
+            list.appendChild(container);
+        }
+
+        function getItems(className) {
+            const items = document.querySelectorAll(`.${className}`);
+            return Array.from(items).map(item => item.value).filter(val => val.trim());
+        }
+
+        function generateImage() {
+            const canvas = document.getElementById('menuCanvas');
+            const ctx = canvas.getContext('2d');
+            const estiloSeleccionado = document.getElementById('estilo').value;
+            const estilo = estilos[estiloSeleccionado];
+
+            canvas.width = 1080;
+            canvas.height = 1920;
+
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            if (estilo.bg.length === 3) {
+                gradient.addColorStop(0, estilo.bg[0]);
+                gradient.addColorStop(0.5, estilo.bg[1]);
+                gradient.addColorStop(1, estilo.bg[2]);
+            } else {
+                gradient.addColorStop(0, estilo.bg[0]);
+                gradient.addColorStop(1, estilo.bg[1]);
+            }
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.globalAlpha = 0.15;
+            
+            if (estilo.pattern === 'waves') {
+                for (let i = 0; i < 5; i++) {
+                    ctx.strokeStyle = estilo.accentColor;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    for (let x = 0; x <= canvas.width; x += 20) {
+                        const y = 300 + i * 350 + Math.sin((x + i * 100) * 0.01) * 80;
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                }
+            } else if (estilo.pattern === 'bubbles') {
+                for (let i = 0; i < 15; i++) {
+                    ctx.fillStyle = estilo.accentColor;
+                    const x = Math.random() * canvas.width;
+                    const y = Math.random() * canvas.height;
+                    const r = 30 + Math.random() * 100;
+                    ctx.beginPath();
+                    ctx.arc(x, y, r, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            } else if (estilo.pattern === 'geometric') {
+                ctx.strokeStyle = estilo.accentColor;
+                ctx.lineWidth = 2;
+                for (let i = 0; i < 8; i++) {
+                    for (let j = 0; j < 12; j++) {
+                        const x = i * 150 + 50;
+                        const y = j * 180 + 50;
+                        ctx.strokeRect(x, y, 80, 80);
+                        ctx.beginPath();
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x + 80, y + 80);
+                        ctx.stroke();
+                    }
+                }
+            } else if (estilo.pattern === 'flames') {
+                ctx.fillStyle = estilo.accentColor;
+                for (let i = 0; i < 20; i++) {
+                    const x = Math.random() * canvas.width;
+                    const y = canvas.height - Math.random() * 400;
+                    ctx.beginPath();
+                    ctx.moveTo(x, y);
+                    ctx.quadraticCurveTo(x - 40, y - 100, x, y - 180);
+                    ctx.quadraticCurveTo(x + 40, y - 100, x, y);
+                    ctx.fill();
+                }
+            } else if (estilo.pattern === 'grid') {
+                ctx.strokeStyle = estilo.accentColor;
+                ctx.lineWidth = 1;
+                for (let i = 0; i < canvas.width; i += 60) {
+                    ctx.beginPath();
+                    ctx.moveTo(i, 0);
+                    ctx.lineTo(i, canvas.height);
+                    ctx.stroke();
+                }
+                for (let i = 0; i < canvas.height; i += 60) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, i);
+                    ctx.lineTo(canvas.width, i);
+                    ctx.stroke();
+                }
+            } else if (estilo.pattern === 'ornament1') {
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = estilo.accentColor;
+                ctx.lineWidth = 8;
+                ctx.strokeRect(40, 40, canvas.width - 80, canvas.height - 80);
+                ctx.lineWidth = 3;
+                ctx.strokeRect(60, 60, canvas.width - 120, canvas.height - 120);
+                
+                ctx.fillStyle = estilo.accentColor;
+                for (let corner of [{x: 100, y: 100}, {x: canvas.width - 100, y: 100}, 
+                                    {x: 100, y: canvas.height - 100}, {x: canvas.width - 100, y: canvas.height - 100}]) {
+                    ctx.beginPath();
+                    ctx.arc(corner.x, corner.y, 15, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.globalAlpha = 0.15;
+            } else if (estilo.pattern === 'ornament2') {
+                ctx.globalAlpha = 0.3;
+                ctx.fillStyle = estilo.accentColor;
+                
+                ctx.beginPath();
+                ctx.moveTo(50, 150);
+                ctx.quadraticCurveTo(80, 100, 120, 80);
+                ctx.quadraticCurveTo(90, 120, 50, 150);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.moveTo(canvas.width - 50, 150);
+                ctx.quadraticCurveTo(canvas.width - 80, 100, canvas.width - 120, 80);
+                ctx.quadraticCurveTo(canvas.width - 90, 120, canvas.width - 50, 150);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.moveTo(50, canvas.height - 150);
+                ctx.quadraticCurveTo(80, canvas.height - 100, 120, canvas.height - 80);
+                ctx.quadraticCurveTo(90, canvas.height - 120, 50, canvas.height - 150);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.moveTo(canvas.width - 50, canvas.height - 150);
+                ctx.quadraticCurveTo(canvas.width - 80, canvas.height - 100, canvas.width - 120, canvas.height - 80);
+                ctx.quadraticCurveTo(canvas.width - 90, canvas.height - 120, canvas.width - 50, canvas.height - 150);
+                ctx.fill();
+                
+                ctx.globalAlpha = 0.15;
+            } else if (estilo.pattern === 'deluxe') {
+                ctx.globalAlpha = 1;
+                ctx.strokeStyle = estilo.accentColor;
+                ctx.lineWidth = 6;
+                ctx.beginPath();
+                ctx.moveTo(100, 60);
+                ctx.lineTo(canvas.width - 100, 60);
+                ctx.lineTo(canvas.width - 60, 100);
+                ctx.lineTo(canvas.width - 60, canvas.height - 100);
+                ctx.lineTo(canvas.width - 100, canvas.height - 60);
+                ctx.lineTo(100, canvas.height - 60);
+                ctx.lineTo(60, canvas.height - 100);
+                ctx.lineTo(60, 100);
+                ctx.closePath();
+                ctx.stroke();
+                ctx.globalAlpha = 0.15;
+            }
+            
+            ctx.globalAlpha = 1;
+
+            let yPos = 100;
+
+            if (logoImage) {
+                const logoSize = 150;
+                const logoX = (canvas.width - logoSize) / 2;
+                ctx.drawImage(logoImage, logoX, yPos, logoSize, logoSize);
+                yPos += logoSize + 80;
+            } else {
+                yPos = 120;
+            }
+
+            ctx.shadowBlur = 20;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.fillStyle = estilo.accentColor;
+            ctx.font = 'bold 70px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('LA COCINA DE RICHY', canvas.width / 2, yPos);
+            ctx.shadowBlur = 0;
+            yPos += 30;
+
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = estilo.accentColor;
+            ctx.strokeStyle = estilo.accentColor;
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            ctx.moveTo(300, yPos);
+            ctx.lineTo(780, yPos);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+            yPos += 80;
+
+            ctx.shadowBlur = 15;
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.4)';
+            ctx.fillStyle = estilo.textColor;
+            ctx.font = 'bold 90px Arial';
+            ctx.fillText('MENÚ DEL DÍA', canvas.width / 2, yPos);
+            ctx.shadowBlur = 0;
+            yPos += 60;
+
+            const fecha = new Date().toLocaleDateString('es-ES', { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            });
+            ctx.font = '45px Arial';
+            ctx.fillStyle = estilo.accentColor;
+            ctx.fillText(fecha, canvas.width / 2, yPos);
+            yPos += 100;
+
+            function drawSection(titulo, items) {
+                if (items.length === 0) return;
+                
+                ctx.fillStyle = estilo.accentColor;
+                ctx.font = 'bold 55px Arial';
+                ctx.textAlign = 'left';
+                ctx.fillText(titulo, 100, yPos);
+                yPos += 70;
+
+                ctx.fillStyle = estilo.textColor;
+                ctx.font = '45px Arial';
+                items.forEach(item => {
+                    if (item.trim()) {
+                        ctx.fillText('• ' + item, 130, yPos);
+                        yPos += 60;
+                    }
+                });
+                yPos += 30;
+            }
+
+            const almuerzoEjecutivo = getItems('almuerzo-ejecutivo-item');
+            const principios = getItems('principio-item');
+            const carnes = getItems('carne-item');
+            const especiales = getItems('especial-item');
+            const bebidas = getItems('bebida-item');
+
+            drawSection('ALMUERZO EJECUTIVO', almuerzoEjecutivo);
+            drawSection('PRINCIPIOS', principios);
+            drawSection('CARNES', carnes);
+            drawSection('ESPECIALES', especiales);
+            drawSection('BEBIDAS', bebidas);
+        }
+
+        function downloadImage() {
+            generateImage();
+            const canvas = document.getElementById('menuCanvas');
+            const link = document.createElement('a');
+            const hoy = new Date().toISOString().split('T')[0];
+            link.download = `menu-${hoy}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        window.onload = function() {
+            const img = new Image();
+            img.onload = function() {
+                logoImage = img;
+                generateImage();
+            };
+            img.onerror = function() {
+                logoImage = null;
+                generateImage();
+            };
+            img.src = "logo.png";
+
+            document.getElementById('estilo').addEventListener('change', generateImage);
+            
+            setInterval(function() {
+                const inputs = document.querySelectorAll('input[type="text"]');
+                inputs.forEach(function(input) {
+                    if (!input.hasAttribute('data-listener')) {
+                        input.addEventListener('input', generateImage);
+                        input.setAttribute('data-listener', 'true');
+                    }
+                });
+            }, 500);
+        };
+    </script>
+</body>
+</html>

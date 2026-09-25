@@ -1,0 +1,10 @@
+# Dependencias y librerias
+node_modules/
+
+# Archivos de entorno y credenciales
+.env
+.env.local
+
+# Archivos de configuracion con llaves o bases de datos locales
+config.js
+supabase_setup.sql
